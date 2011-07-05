@@ -1,1 +1,1 @@
-from daemon import Thinkpadlightd
+from .thinkpadlightd import *
