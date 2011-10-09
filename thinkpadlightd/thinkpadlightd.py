@@ -6,6 +6,7 @@ if sys.version_info[:2] < (3,1):
 	exit(1)
 
 import socketserver
+import argparse
 
 ADDR = HOST, PORT = "localhost", 9698
 LIGHT_DEVICE_PATH = "/proc/acpi/ibm/light"
@@ -98,8 +99,13 @@ def main():
 	It can be connected to via netcat: "nc localhost 9698"; writing "1" and "0" turns the light on and off.
 	"""
 
+	parser = argparse.ArgumentParser(description='A deamon to control the ThinkLight via network.')
+	parser.add_argument("--host", default=HOST, help="The host address to listen on (e.g. localhost for local connections only or 0.0.0.0 for all addresses). Default: %s" % (HOST,))
+	parser.add_argument("--port", default=PORT, help="The port to listen on. Default: %s" % (PORT,))
+	args = parser.parse_args()
+
 	try:
-		Thinkpadlightd().run()
+		Thinkpadlightd(addr=(args.host, args.port)).run()
 	except ThinkpadlightdException as e:
 		print(e, file=sys.stdout)
 		exit(1)
